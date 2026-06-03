@@ -1,15 +1,17 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+
+import { useTheme } from '../context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import CategoryBadge from './CategoryBadge';
-import { colors, radius, spacing, typography } from '../theme/colors';
+import { radius, spacing, typography } from '../theme/colors';
 
-const FILE_ICONS = {
+const getFileIcons = (theme) => ({
   'application/pdf': { icon: 'document-text', color: '#EF4444' },
   'image/jpeg': { icon: 'image', color: '#3B82F6' },
   'image/png': { icon: 'image', color: '#3B82F6' },
-  default: { icon: 'document', color: colors.primary },
-};
+  default: { icon: 'document', color: theme.primary },
+});
 
 function formatBytes(bytes) {
   if (!bytes) return '';
@@ -24,7 +26,10 @@ function formatDate(dateStr) {
 }
 
 export default function DocumentCard({ document, onPress }) {
-  const fileInfo = FILE_ICONS[document.file_type] || FILE_ICONS.default;
+  const { theme } = useTheme();
+  const styles = React.useMemo(() => createStyles(theme), [theme]);
+  const fileIcons = getFileIcons(theme);
+  const fileInfo = fileIcons[document.file_type] || fileIcons.default;
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.75}>
@@ -46,21 +51,21 @@ export default function DocumentCard({ document, onPress }) {
       </View>
 
       {/* Arrow */}
-      <Ionicons name="chevron-forward" size={16} color={colors.textMuted} style={styles.arrow} />
+      <Ionicons name="chevron-forward" size={16} color={theme.textMuted} style={styles.arrow} />
     </TouchableOpacity>
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme) => StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.bgCard,
+    backgroundColor: theme.bgCard,
     borderRadius: radius.lg,
     padding: spacing.md,
     marginBottom: spacing.sm,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: theme.border,
   },
   iconWrap: {
     width: 52,
@@ -76,7 +81,7 @@ const styles = StyleSheet.create({
   },
   name: {
     ...typography.bodyBold,
-    color: colors.textPrimary,
+    color: theme.textPrimary,
   },
   meta: {
     flexDirection: 'row',
@@ -84,7 +89,7 @@ const styles = StyleSheet.create({
   },
   metaText: {
     ...typography.caption,
-    color: colors.textMuted,
+    color: theme.textMuted,
   },
   arrow: {
     marginLeft: spacing.sm,

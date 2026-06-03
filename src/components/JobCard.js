@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+
+import { useTheme } from '../context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import StatusChip from './StatusChip';
-import { colors, radius, spacing, typography } from '../theme/colors';
+import { radius, spacing, typography } from '../theme/colors';
 
 function formatDate(dateStr) {
   if (!dateStr) return '';
@@ -10,10 +12,12 @@ function formatDate(dateStr) {
 }
 
 export default function JobCard({ job, onPress }) {
+  const { theme } = useTheme();
+  const styles = React.useMemo(() => createStyles(theme), [theme]);
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.75}>
       {/* Left accent bar */}
-      <View style={[styles.accentBar, { backgroundColor: colors.status[job.status]?.dot || colors.primary }]} />
+      <View style={[styles.accentBar, { backgroundColor: theme.status[job.status]?.dot || theme.primary }]} />
 
       <View style={styles.content}>
         <View style={styles.topRow}>
@@ -22,25 +26,25 @@ export default function JobCard({ job, onPress }) {
         </View>
         <Text style={styles.position} numberOfLines={1}>{job.position}</Text>
         <View style={styles.bottomRow}>
-          <Ionicons name="calendar-outline" size={12} color={colors.textMuted} />
+          <Ionicons name="calendar-outline" size={12} color={theme.textMuted} />
           <Text style={styles.date}> Applied {formatDate(job.date_applied)}</Text>
         </View>
       </View>
 
-      <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
+      <Ionicons name="chevron-forward" size={16} color={theme.textMuted} />
     </TouchableOpacity>
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme) => StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.bgCard,
+    backgroundColor: theme.bgCard,
     borderRadius: radius.lg,
     marginBottom: spacing.sm,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: theme.border,
     overflow: 'hidden',
   },
   accentBar: {
@@ -60,12 +64,12 @@ const styles = StyleSheet.create({
   },
   company: {
     ...typography.bodyBold,
-    color: colors.textPrimary,
+    color: theme.textPrimary,
     flex: 1,
   },
   position: {
     ...typography.body,
-    color: colors.textSecondary,
+    color: theme.textSecondary,
   },
   bottomRow: {
     flexDirection: 'row',
@@ -74,6 +78,6 @@ const styles = StyleSheet.create({
   },
   date: {
     ...typography.caption,
-    color: colors.textMuted,
+    color: theme.textMuted,
   },
 });

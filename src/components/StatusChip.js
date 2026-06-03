@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, radius, spacing, typography } from '../theme/colors';
+import { radius, spacing, typography } from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 
 export default function StatusChip({ status }) {
-  const palette = colors.status[status] || colors.status.Applied;
+  const { theme } = useTheme();
+  const palette = theme.status[status] || theme.status.Applied;
   return (
     <View style={[styles.chip, { backgroundColor: palette.bg }]}>
       <View style={[styles.dot, { backgroundColor: palette.dot }]} />

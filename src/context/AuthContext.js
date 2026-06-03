@@ -26,18 +26,23 @@ export function AuthProvider({ children }) {
   }, []);
 
   const signUp = async (email, password) => {
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) throw error;
+    const response = await supabase.auth.signUp({ email, password });
+    if (response && response.error) throw response.error;
   };
 
   const signIn = async (email, password) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
+    const response = await supabase.auth.signInWithPassword({ email, password });
+    if (response && response.error) throw response.error;
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    const response = await supabase.auth.signOut();
+    if (response && response.error) {
+      // If the server-side logout fails (e.g., the 100KB 520 error), 
+      // forcefully clear the local session so the user isn't trapped.
+      console.warn('Server signout failed, forcing local signout:', response.error.message);
+      await supabase.auth.signOut({ scope: 'local' });
+    }
   };
 
   return (

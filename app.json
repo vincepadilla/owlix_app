@@ -1,24 +1,37 @@
 {
   "expo": {
-    "name": "Vault_App",
-    "slug": "Vault_App",
+    "name": "Owlix",
+    "slug": "owlix",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/owlix-logo.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0A0F2C",
+    "splash": {
+      "backgroundColor": "#0A0F2C",
+      "image": "./assets/owlix-logo.png"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.owlix.app"
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
-      }
+        "backgroundColor": "#0A0F2C",
+        "foregroundImage": "./assets/owlix-logo.png"
+      },
+      "package": "com.owlix.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-document-picker",
+      [
+        "expo-file-system",
+        {}
+      ]
+    ]
   }
 }

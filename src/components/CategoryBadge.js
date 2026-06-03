@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, radius, spacing, typography } from '../theme/colors';
+import { radius, spacing, typography } from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 
 export default function CategoryBadge({ category }) {
-  const palette = colors.category[category] || colors.category.Other;
+  const { theme } = useTheme();
+  const palette = theme.category[category] || theme.category.Other;
   const icons = { Certificate: '🏅', Resume: '📄', ID: '🪪', Other: '📎' };
   return (
     <View style={[styles.badge, { backgroundColor: palette.bg }]}>
