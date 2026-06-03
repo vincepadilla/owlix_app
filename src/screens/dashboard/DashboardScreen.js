@@ -394,7 +394,7 @@ export default function DashboardScreen({ navigation }) {
               <TouchableOpacity
                 style={[
                   styles.quickBtn,
-                  { borderColor: theme.borderActive, backgroundColor: isDark ? 'rgba(99,102,241,0.10)' : 'rgba(99,102,241,0.07)' },
+                  { borderColor: theme.borderActive, backgroundColor: isDark ? 'rgba(72, 163, 243, 0.1)' : 'rgba(99,102,241,0.07)' },
                 ]}
                 onPress={() => navigation.navigate('Documents', { screen: 'UploadDocument' })}
                 activeOpacity={0.75}

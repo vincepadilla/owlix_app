@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet,
-  ScrollView, ActivityIndicator, Alert, Linking, Modal, Image
+  ScrollView, ActivityIndicator, Alert, Linking, Modal, Image, Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
@@ -42,9 +42,18 @@ export default function DocumentDetailScreen({ route, navigation }) {
       const localUri = `${FileSystem.cacheDirectory}careervault_${document.id}.${ext}`;
       const fileInfo = await FileSystem.getInfoAsync(localUri);
 
+      const showDocument = async (uri) => {
+        if (Platform.OS === 'android' && document.file_type === 'application/pdf') {
+          // Android WebView cannot render PDFs locally, so we use the native system viewer
+          await Sharing.shareAsync(uri, { mimeType: 'application/pdf', dialogTitle: document.name });
+        } else {
+          setLocalDocUri(uri);
+          setModalVisible(true);
+        }
+      };
+
       if (fileInfo.exists) {
-         setLocalDocUri(localUri);
-         setModalVisible(true);
+         await showDocument(localUri);
       } else {
         const { data, error } = await supabase.storage
           .from('documents')
@@ -53,8 +62,7 @@ export default function DocumentDetailScreen({ route, navigation }) {
         
         const downloadResult = await FileSystem.downloadAsync(data.signedUrl, localUri);
         if (downloadResult.status === 200) {
-          setLocalDocUri(localUri);
-          setModalVisible(true);
+          await showDocument(localUri);
         } else {
           throw new Error('Failed to download document for viewing.');
         }
@@ -247,14 +255,23 @@ export default function DocumentDetailScreen({ route, navigation }) {
             {document.file_type?.startsWith('image/') ? (
               <Image source={{ uri: localDocUri }} style={{ flex: 1, resizeMode: 'contain' }} />
             ) : document.file_type === 'application/pdf' ? (
-              <WebView 
-                source={{ uri: localDocUri }} 
-                style={{ flex: 1 }} 
-                originWhitelist={['*']} 
-                allowFileAccess={true}
-                allowFileAccessFromFileURLs={true}
-                allowUniversalAccessFromFileURLs={true}
-              />
+              Platform.OS === 'android' ? (
+                <View style={styles.modalUnsupported}>
+                  <Ionicons name="document-text-outline" size={48} color={theme.textMuted} />
+                  <Text style={{ color: theme.textSecondary, marginTop: 16, textAlign: 'center' }}>
+                    Android requires an external app to view PDFs.
+                  </Text>
+                </View>
+              ) : (
+                <WebView 
+                  source={{ uri: localDocUri }} 
+                  style={{ flex: 1 }} 
+                  originWhitelist={['*']} 
+                  allowFileAccess={true}
+                  allowFileAccessFromFileURLs={true}
+                  allowUniversalAccessFromFileURLs={true}
+                />
+              )
             ) : (
               <View style={styles.modalUnsupported}>
                 <Ionicons name="alert-circle-outline" size={48} color={theme.textMuted} />
