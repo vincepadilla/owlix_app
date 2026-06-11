@@ -11,6 +11,7 @@ import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import StatusChip from '../../components/StatusChip';
+import ChatbotModal from '../../components/ChatbotModal';
 import { NotificationManager } from '../../utils/NotificationManager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { radius, spacing, typography, glassShadow } from '../../theme/colors';
@@ -28,6 +29,7 @@ export default function DashboardScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showChatbot, setShowChatbot] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
@@ -423,6 +425,21 @@ export default function DashboardScreen({ navigation }) {
         </View>
 
       </ScrollView>
+
+      {/* Floating Chatbot Button */}
+      <TouchableOpacity
+        style={[styles.fab, shadow, { backgroundColor: theme.primary }]}
+        onPress={() => setShowChatbot(true)}
+        activeOpacity={0.8}
+      >
+        <Ionicons name="chatbubbles" size={24} color="#FFF" />
+      </TouchableOpacity>
+
+      {/* Chatbot Modal */}
+      <ChatbotModal
+        visible={showChatbot}
+        onClose={() => setShowChatbot(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -600,6 +617,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   quickBtnText: { ...typography.captionBold, textAlign: 'center', lineHeight: 18 },
+  fab: {
+    position: 'absolute',
+    bottom: spacing.xl,
+    right: spacing.lg,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 6,
+    zIndex: 100,
+  },
 });
 
 
